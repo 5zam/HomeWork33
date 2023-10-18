@@ -32,6 +32,9 @@ public class Author {
         AuthorBook = authorBook;
     }
 
+    public Author(String authorName, String authorEmail) {
+    }
+
     public Long getId() {
         return id;
     }

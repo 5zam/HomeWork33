@@ -1,4 +1,4 @@
-package com.example.LibraryManagementSystem.Library.Entities.Repositories;
+package com.example.LibraryManagementSystem.Library.Repositories;
 
 import com.example.LibraryManagementSystem.Library.Entities.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
