@@ -14,7 +14,7 @@ public class Issue {
     private Long id;
 
     private Date issueDate;
-    private Date  returnDate;
+    private Date returnDate;
 
     @OneToOne
     @JoinColumn(name = "issue_Student")

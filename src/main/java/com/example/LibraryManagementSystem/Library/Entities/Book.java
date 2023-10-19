@@ -32,12 +32,6 @@ public class Book {
         this.author = author;
     }
 
-    public Book(String title, String category, int quantity) {
-        this.title = title;
-        this.category = category;
-        this.quantity = quantity;
-    }
-
     public String getIsbn() {
         return isbn;
     }
@@ -97,5 +91,17 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(isbn, title, category, quantity, issue, author);
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "isbn='" + isbn + '\'' +
+                ", title='" + title + '\'' +
+                ", category='" + category + '\'' +
+                ", quantity=" + quantity +
+                ", issue=" + issue +
+                ", author=" + author +
+                '}';
     }
 }
