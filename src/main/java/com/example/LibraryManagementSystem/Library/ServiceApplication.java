@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,32 +23,20 @@ import java.util.Scanner;
 public class ServiceApplication {
 
     @Autowired
-    private static AuthorRepository authorRepository;
+    private AuthorRepository authorRepository;
 
     @Autowired
     private static BookRepository bookRepository;
 
     @Autowired
-    private IssueRepository issueRepository;
+    private static IssueRepository issueRepository;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private static StudentRepository studentRepository;
 
 
-    static void addBook(int isbn, String title, String category, String authorName, String authorEmail, int numOfBooks)
-    {
-        try{
-            com.example.LibraryManagementSystem.Library.Entities.Book book = new Book(isbn, title, category, numOfBooks);
-            bookRepository.save(book);
-            Author author = new Author(authorName, authorEmail);
-            author.setAuthorBook(book);
-            book.setAuthor(author);
-            authorRepository.save(author);
-            System.out.println("Book added successfully"); //System.out.println("Book added");
-        }
-        catch (DataIntegrityViolationException e) {
-            System.err.println(" An error occurred while adding the book. Please check if the ISBN already exists, then try again");
-        }
+    static void addBook(int isbn, String title, String category, String authorName, String authorEmail, int numOfBooks) {
+//
 
     }
 
@@ -78,7 +69,7 @@ public class ServiceApplication {
 //                System.out.println(book);
 //            }
 //        }
-//    }
+    }
 
 
 //    public static void searchBookByAuthor() {
@@ -97,33 +88,71 @@ public class ServiceApplication {
 //    }
 
 
-//    public static void listAllBooks(BookRepository bookRepository) {
-//        List<Book> allBooks = bookRepository.findAllBooksAndAuthors();
-//
-////        if (allBooks.isEmpty()) {
-////            System.out.println("No books found in the library.");
-////        } else {
-////            System.out.println("All books in the library:");
-////            for (Book book : allBooks) {
-////                System.out.println("Title: " + book.getTitle());
-////                System.out.println("Author: " + book.getAuthor().getName());
-////                System.out.println("Category: " + book.getCategory());
-////                System.out.println("Quantity: " + book.getQuantity());
-////                System.out.println("ISBN: " + book.getIsbn());
-////                System.out.println("----------------------------------");
-////            }
-////        }
-//    }
-//    public static void issueBookToStudent(Scanner scanner, IssueRepository issueRepository, BookRepository bookRepository, StudentRepository studentRepository) {
-//        // Get input from the user (e.g., student's ID and book's ISBN)
-//
-//
-//    }
+        public static void listAllBooks (Scanner scanner){
+            //add your code here
+        }
+        public static void issueBookToStudent (Scanner scanner){
+            System.out.print("Enter book ISBN: ");
+            String isbn = scanner.next();
 
-  // public static void listBooksByUsn(Scanner scanner) {
-        //add your code here}
+            System.out.print("Enter student USN: ");
+            String usn = scanner.next();
+
+            // Fetch the book and student from the database based on ISBN and USN
+            Book book = bookRepository.findByIsbn(isbn);
+            Student student = studentRepository.findByUsn(usn);
+            if (book == null) {
+                System.out.println("Book with ISBN " + isbn + " not found.");
+            } else if (student == null) {
+                System.out.println("Student with USN " + usn + " not found.");
+            } else {
+                // Check if the book is available
+                if (book.getQuantity() > 0) {
+                    // Issue the book to the student
+                    Issue issue = new Issue();
+
+                    issue.setIssueDate(new Date());
+                    issue.setIssueStudent(student);
+                    issue.setIssueBook(book);
+                    // Update book quantity
+                    book.setQuantity(book.getQuantity() - 1);
+
+                    // Save the issue and book updates to the database
+                    issueRepository.save(issue);
+                    bookRepository.save(book);
+                    System.out.println("Book with ISBN " + isbn + " issued to student with USN " + usn);
+                } else {
+                    System.out.println("Book with ISBN " + isbn + " is not available for issue.");
+                }
+            }
+        }
+
+        public static void listBooksByUsn (Scanner scanner){
+            System.out.print("Enter student USN: ");
+            String usn = scanner.next();
+
+            // Fetch the student from the database based on USN
+            Student student = studentRepository.findByUsn(usn);
+
+            if (student == null) {
+                System.out.println("Student with USN " + usn + " not found.");
+            } else {
+                // Fetch books issued to the student
+                List<Issue> issuedBooks = issueRepository.findByStudent(student);
+
+                if (issuedBooks.isEmpty()) {
+                    System.out.println("No books issued to the student with USN " + usn);
+                } else {
+                    System.out.println("Books issued to the student with USN " + usn + ":");
+                    for (Issue issue : issuedBooks) {
+                        System.out.println("ISBN: " + issue.getIssueBook().getIsbn() + ", Title: " + issue.getIssueBook().getTitle());
+                    }
+                }
+            }
+
+        }
     }
-}
+
 
 
 

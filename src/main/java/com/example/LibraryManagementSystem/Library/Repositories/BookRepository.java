@@ -3,11 +3,15 @@ package com.example.LibraryManagementSystem.Library.Repositories;
 import com.example.LibraryManagementSystem.Library.Entities.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+<<<<<<< HEAD
 import org.springframework.data.repository.query.Param;
 
+=======
+import org.springframework.stereotype.Repository;
+>>>>>>> ca2e14af660d730637d0f2bb8169a313d8415ba5
 
 import java.util.List;
-
+@Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     //just for error
@@ -48,4 +52,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 
 
+    Book findByIsbn(String isbn);
 }
