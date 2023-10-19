@@ -35,23 +35,22 @@ public class ServiceApplication {
         //add your code here
     }
 
-    public static void searchBookByCategory(Scanner scanner) {
+    public static void searchBookByCategory(Scanner scanner){
 
         System.out.print("Enter the category to search: ");
         String categoryToSearch = scanner.nextLine();
-        Book result = bookRepository.findByCategory(categoryToSearch);
-
-        //add your code here
+        Book result = bookRepository.findByCategory(categoryToSearch).get();
+        System.out.println(result);
     }
 
 
-    public static void searchBookByAuthor(Scanner scanner) {
+
+    public static void searchBookByAuthor(Scanner scanner){
         System.out.print("Enter the author's name to search: ");
         String authorNameToSearch = scanner.nextLine();
-        Book resulte1 = bookRepository.findByAuthorBook (authorNameToSearch);
-        //add your code here
+        Book resulte1 = bookRepository.findByAuthorBook(authorNameToSearch).get();
+        System.out.println(resulte1);
     }
-
 
     public static void listAllBooks(Scanner scanner) {
         //add your code here
