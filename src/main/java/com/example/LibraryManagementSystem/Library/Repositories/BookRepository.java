@@ -7,7 +7,8 @@ import java.awt.print.Book;
 import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-
+    List<Book>findByCategory (String category);
+    List<Book>findByAuthorBook(Book authorBook);
     @Query("SELECT b.title, b.isbn, b.category, b.quantity, a.name, a.email FROM Book b JOIN b.author a")
     List<Object[]> listBooksAndAuthors();
 
