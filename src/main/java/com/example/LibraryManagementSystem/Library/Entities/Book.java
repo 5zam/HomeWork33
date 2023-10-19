@@ -38,6 +38,10 @@ public class Book {
         this.quantity = quantity;
     }
 
+    public Book(int isbn, String title, String category, int numOfBooks) {
+
+    }
+
     public String getIsbn() {
         return isbn;
     }

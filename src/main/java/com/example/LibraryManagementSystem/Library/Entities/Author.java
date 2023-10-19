@@ -2,9 +2,6 @@ package com.example.LibraryManagementSystem.Library.Entities;
 
 
 import jakarta.persistence.*;
-
-
-
 import java.util.Objects;
 
 @Entity
