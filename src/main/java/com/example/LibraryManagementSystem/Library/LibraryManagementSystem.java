@@ -86,11 +86,15 @@ public class LibraryManagementSystem {
 					break;
 
 				case 3:
-					ServiceApplication.searchBookByCategory(scanner);
+					System.out.print(" Enter the category: ");
+					category = scanner.nextLine();
+					ServiceApplication.searchBookByCategory(category);
 					break;
 
 				case 4:
-					//ServiceApplication.searchBookByAuthor(scanner);
+					System.out.print(" Enter the author's name: ");
+                    String name = scanner.nextLine();
+					ServiceApplication.searchBookByAuthor(name);
 					break;
 
 				case 5:
