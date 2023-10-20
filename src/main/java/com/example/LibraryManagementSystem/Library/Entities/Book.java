@@ -32,6 +32,9 @@ public class Book {
         this.author = author;
     }
 
+    public Book(String isbn, String title, String category, int numOfBooks) {
+    }
+
 
     public String getIsbn() {
         return isbn;

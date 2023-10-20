@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
-
+public interface BookRepository extends JpaRepository<Book, String> {
+    List<Book> findByTitle(String title);
     Book findByCategory(String category);
     Book findByAuthorName(String name);
     @Query("SELECT b.title, b.isbn, b.category, b.quantity, a.name, a.email FROM Book b JOIN b.author a")
@@ -51,5 +51,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 
 
-    Book findByIsbn(String isbn);
+    List<Book> findByIsbn(String isbn);
 }

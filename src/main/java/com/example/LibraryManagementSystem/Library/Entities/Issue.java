@@ -24,15 +24,16 @@ public class Issue {
     @JoinColumn(name = "issue_Book")
     private Book issueBook;
 
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
     public Issue() {
     }
 
-    public Issue(Long id, Date issueDate, Date returnDate, Student issueStudent, Book issueBook) {
-        this.id = id;
+    public Issue(Date issueDate, Date returnDate) {
         this.issueDate = issueDate;
         this.returnDate = returnDate;
-        this.issueStudent = issueStudent;
-        this.issueBook = issueBook;
     }
 
     public Long getId() {

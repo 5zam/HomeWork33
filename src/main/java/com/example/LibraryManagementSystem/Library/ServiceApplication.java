@@ -1,5 +1,6 @@
 package com.example.LibraryManagementSystem.Library;
 
+import com.example.LibraryManagementSystem.Library.Entities.Author;
 import com.example.LibraryManagementSystem.Library.Entities.Book;
 import com.example.LibraryManagementSystem.Library.Entities.Issue;
 import com.example.LibraryManagementSystem.Library.Entities.Student;
@@ -9,17 +10,18 @@ import com.example.LibraryManagementSystem.Library.Repositories.IssueRepository;
 import com.example.LibraryManagementSystem.Library.Repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import java.util.Date;
-import java.util.List;
+import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Scanner;
+import java.util.*;
+
+
 
 @SpringBootApplication
 
 public class ServiceApplication {
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private static AuthorRepository authorRepository;
 
     @Autowired
     private static BookRepository bookRepository;
@@ -30,26 +32,47 @@ public class ServiceApplication {
     @Autowired
     private static StudentRepository studentRepository;
 
+    private static Scanner scanner = new Scanner(System.in);
 
-    static void addBook(int isbn, String title, String category, String authorName, String authorEmail, int numOfBooks) {
-//
+
+    static void addBook(String isbn, String title, String category, String authorName, String authorEmail, int numOfBooks) {
+        try {
+            // Check if the author already exists
+            Author author = authorRepository.findByName(authorName);
+            if (author == null) {
+                author = new Author(authorName, authorEmail);
+                authorRepository.save(author);
+            }
+
+            // Create the book
+            Book book = new Book(isbn, title, category, numOfBooks);
+            book.setAuthor(author);
+
+            // Save the book
+            bookRepository.save(book);
+
+            System.out.println("Book added successfully");
+        } catch (DataIntegrityViolationException e) {
+            System.err.println("An error occurred while adding the book. Please check if the ISBN already exists.");
+        }
+
 
     }
 
 
     public static void searchBookByTitle(Scanner scanner) {
-//        System.out.print("Enter title to search: ");
-//        String titleToSearch = scanner.nextLine();
-//        List<Book> booksWithTitle = bookRepository.findByTitle(titleToSearch);
-//
-//        if (booksWithTitle.isEmpty()) {
-//            System.out.println("No books found with the title: " + titleToSearch);
-//        } else {
-//            System.out.println("Books found with the title '" + titleToSearch + "':");
-//            for (Book book : booksWithTitle) {
-//                System.out.println(book);
-//            }
-//        }
+        System.out.print("Enter title to search: ");
+        String titleToSearch = scanner.nextLine();
+        List<Book> booksWithTitle = bookRepository.findByTitle(titleToSearch);
+
+        if (booksWithTitle.isEmpty()) {
+            System.out.println("No books found with the title: " + titleToSearch);
+        } else {
+            System.out.println("Books found with the title '" + titleToSearch + "':");
+            for (Book book : booksWithTitle) {
+                System.out.println(book);
+            }
+        }
     }
 
     public static Book searchBookByCategory(String category) {
@@ -57,50 +80,54 @@ public class ServiceApplication {
     }
 
 
-
-
-    public static void listAllBooks(Scanner scanner) {
-        //add your code here
-    }
-
-    public static void issueBookToStudent(Scanner scanner) {
-        System.out.print("Enter book ISBN: ");
-        String isbn = scanner.next();
-
-        System.out.print("Enter student USN: ");
-        String usn = scanner.next();
-
-        // Fetch the book and student from the database based on ISBN and USN
-        Book book = bookRepository.findByIsbn(isbn);
+    public static void issueBookToStudent(String usn, String bookISBN, String name) {
+        Student s = new Student(usn, name);
+        studentRepository.save(s);
         Student student = studentRepository.findByUsn(usn);
-        if (book == null) {
-            System.out.println("Book with ISBN " + isbn + " not found.");
-        } else if (student == null) {
-            System.out.println("Student with USN " + usn + " not found.");
+        Book book = (Book) bookRepository.findByIsbn(bookISBN);
+        if (student != null && book != null) {
+// Calculate the return date (7 days from now)
+            Calendar returnDate = Calendar.getInstance();
+            returnDate.add(Calendar.DAY_OF_MONTH, 7);
+            Issue issue = new Issue();
+            issue.setIssueDate(new Date());
+            issue.setReturnDate(returnDate.getTime());
+            issue.setIssueStudent(student);
+            issue.setIssueBook(book);
+            book.setIssue(issue);
+            issueRepository.save(issue);
+            System.out.println(" Book issued. Return date: " + issue.getReturnDate());
         } else {
-            // Check if the book is available
-            if (book.getQuantity() > 0) {
-                // Issue the book to the student
-                Issue issue = new Issue();
+            System.err.println(" Student or book not found");
+            return;
 
-                issue.setIssueDate(new Date());
-                issue.setIssueStudent(student);
-                issue.setIssueBook(book);
-                // Update book quantity
-                book.setQuantity(book.getQuantity() - 1);
-
-                // Save the issue and book updates to the database
-                issueRepository.save(issue);
-                bookRepository.save(book);
-                System.out.println("Book with ISBN " + isbn + " issued to student with USN " + usn);
-            } else {
-                System.out.println("Book with ISBN " + isbn + " is not available for issue.");
-            }
         }
     }
 
     public static void listBooksByUsn(Scanner scanner) {
-        System.out.print("Enter student USN: ");
+    }
+
+    public static void listAllBooks() {
+        List<Book> allBooks = bookRepository.findAll();
+        List<Book> books = new ArrayList<>();
+
+
+        if (allBooks.isEmpty()) {
+            System.out.println("No books found in the library.");
+        } else {
+            System.out.println("List of all books in the library:");
+            for (Book book : allBooks) {
+                System.out.println("ISBN: " + book.getIsbn());
+                System.out.println("Title: " + book.getTitle());
+                System.out.println("Category: " + book.getCategory());
+                System.out.println("Quantity: " + book.getQuantity());
+                System.out.println("------------------------");
+            }
+        }
+    }
+
+    public static void searchBookByAuthor(String name) {
+                System.out.print("Enter student USN: ");
         String usn = scanner.next();
 
         // Fetch the student from the database based on USN
@@ -112,7 +139,7 @@ public class ServiceApplication {
             // Fetch books issued to the student
             List<Issue> issuedBooks = issueRepository.findByStudent(student);
 
-            if (issuedBooks.isEmpty()) {
+          if (issuedBooks.isEmpty()) {
                 System.out.println("No books issued to the student with USN " + usn);
             } else {
                 System.out.println("Books issued to the student with USN " + usn + ":");
@@ -121,15 +148,15 @@ public class ServiceApplication {
                 }
             }
         }
+    }
+
+
+
+
 
     }
 
 
-    public static Book searchBookByAuthor(String author) {
-         return bookRepository.findByAuthorName(author);
- }
-
-}
 
 
 

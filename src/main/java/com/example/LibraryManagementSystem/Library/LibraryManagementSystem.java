@@ -11,14 +11,17 @@ import com.example.LibraryManagementSystem.Library.Repositories.StudentRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 
 
 
 @SpringBootApplication
+@ComponentScan(basePackages = "com.example.LibraryManagementSystem.Library")
 public class LibraryManagementSystem {
 
 	@Autowired
@@ -32,16 +35,21 @@ public class LibraryManagementSystem {
 
 	@Autowired
 	private StudentRepository studentRepository;
-	private static Book book = new Book();
-	private static Author author = new Author();
-	private static Student student = new Student();
-	static Issue issue = new Issue();
+//	private static Book book = new Book();
+//	//private static Author author = new Author();
+//	private static Student student = new Student();
+//	static Issue issue = new Issue();
+	public List<Author> authors;
+	public List<Student> students;
+	public List<Issue> issues;
 
+	public  LibraryManagementSystem(BookRepository bookRepository, AuthorRepository authorRepository, IssueRepository issueRepository){
+		this.bookRepository = bookRepository;
+		this.authorRepository = authorRepository;
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(LibraryManagementSystem.class, args);
-
 		Scanner scanner = new Scanner(System.in);
-
 		while (true) {
 			System.out.println("Menu Options:");
 			System.out.println("1. Add a book");
@@ -68,9 +76,8 @@ public class LibraryManagementSystem {
 			switch (choice) {
 
 				case 1:
-					//ServiceApplication.addBook(scanner);
 					System.out.print(" Enter isbn book: ");
-					int isbn = scanner.nextInt();
+					String isbn = scanner.nextLine();
 					scanner.nextLine(); System.out.print(" Enter title of the book: ");
 					String title = scanner.nextLine(); System.out.print(" Enter the category: ");
 					String category = scanner.nextLine(); System.out.print(" Enter Author name: ");
@@ -82,7 +89,9 @@ public class LibraryManagementSystem {
 					break;
 
 				case 2:
-					ServiceApplication.searchBookByTitle(scanner);
+					System.out.print(" Enter the Title: ");
+					title=scanner.nextLine();
+				ServiceApplication.searchBookByTitle(scanner);
 					break;
 
 				case 3:
@@ -98,15 +107,21 @@ public class LibraryManagementSystem {
 					break;
 
 				case 5:
-//					ServiceApplication.listAllBooks(BookRepository bookRepository);
+					ServiceApplication.listAllBooks();
 					break;
 
 				case 6:
-//					ServiceApplication.issueBookToStudent(scanner);
+					scanner.nextLine();
+					System.out.print(" Enter usn: ");
+					String usn = scanner.nextLine(); System.out.print(" Enter name: ");
+					name = scanner.nextLine(); System.out.print(" Enter  book ISBN: ");
+					String bookISBN = String.valueOf(scanner.nextInt());
+					ServiceApplication.issueBookToStudent(usn , bookISBN , name);
+
 					break;
 
 				case 7:
-					//ServiceApplication.listBooksByUsn(scanner);
+					ServiceApplication.listBooksByUsn(scanner);
 				break;
 
 				case 8:

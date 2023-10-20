@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
+    static void save(int s) {
+    }
+//    static void save(int s) {
+//    }
 
     //Student findByUsn(String usn);
 

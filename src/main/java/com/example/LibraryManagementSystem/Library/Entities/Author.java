@@ -22,14 +22,9 @@ public class Author {
     public Author() {
     }
 
-    public Author(Long id, String name, String email, Book authorBook) {
-        this.id = id;
+    public Author(String name, String email) {
         this.name = name;
         this.email = email;
-        AuthorBook = authorBook;
-    }
-
-    public Author(String authorName, String authorEmail) {
     }
 
     public Long getId() {
